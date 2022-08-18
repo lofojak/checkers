@@ -1,0 +1,34 @@
+div.SectionW {
+	width: 70px; height: 70px;
+	display: inline-block;
+	margin-right: 5px;
+	background: #ccf; 
+}
+div.SectionB {
+	width: 70px; height: 70px;
+	display: inline-block;
+	margin-right: 5px;
+	background: black; 
+	border-radius: 0%;
+
+}
+div.SectionB:hover { 
+				background: #779f19; 
+	.circle: 	background:  #777;}
+
+.circle {
+	border-radius: 50%;
+	width: 66px;
+	height: 66px;
+	border: 1px solid #fff;
+	position:  absolute;
+	left: 12px;
+	top: 12px;
+	visibility: hidden;
+}
+.W {
+	background: #bcc;
+}
+.B {
+	background: #644;
+}
