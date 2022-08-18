@@ -1,36 +1,34 @@
 var C = new Array();
 var W = new Array();
 var B = new Array();
+var Wcoord = new Array(1, 3, 5, 7, 10, 12, 14, 16, 17, 19, 21, 23);
+var Bcoord = new Array(42, 44, 46, 48, 49, 51, 53, 55, 58, 60, 62, 64);
 
 function init() {
 	for (var i = 0; i < 64; i++) {
 		C[i] = document.getElementById('C'+i);
 	}
+
 	for (var i = 0; i < 12; i++) {
 		W[i] = document.getElementById('W'+i);
 		B[i] = document.getElementById('B'+i);
 	}
 }
 
-function Tableleft(i) {
-	return (Math.floor(i / 4)) % 2 + (2 * i) % 8;
-}
-
-
 function Start() {
 	for (var i = 0; i < 12; i++) {
 		W[i].style.visibility = "visible";
-		W[i].style.top = (558 - 78 * Math.floor(i / 4)) + "px";
-		W[i].style.left = (12 + 79 * Tableleft(i)) + "px";
+		W[i].style.top = (558 - 78 * Math.floor((Wcoord[i] - 1) / 8)) + "px";
+		W[i].style.left = (12 + 79 * ((Wcoord[i] - 1) % 8)) + "px";
 
 		B[i].style.visibility = "visible";
-		B[i].style.top = (558 - 78 * Math.floor((i + 20) / 4)) + "px";
-		B[i].style.left = (12 + 79 * Tableleft(i+20)) + "px";
+		B[i].style.top = (558 - 78 * Math.floor((Bcoord[i] - 1) / 8)) + "px";
+		B[i].style.left = (12 + 79 * ((Bcoord[i] - 1) % 8)) + "px";
 	}
 }
 
 function Click(id) {
-	alert(isNumber(id))
+	alert(id);
 }
 
 /*  					|	(Math.floor(i / 4)) % 2 + (2 * i + 1) % 8
