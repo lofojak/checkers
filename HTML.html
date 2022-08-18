@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Шашки</title>
+	<script type="text/javascript" src="./JS.js"></script>
+	<style>
+		div.SectionW {
+			width: 70px; height: 70px;
+			display: inline-block;
+			margin-right: 5px;
+			background: #ccf; 
+		}
+		div.SectionB {
+			width: 70px; height: 70px;
+			display: inline-block;
+			margin-right: 5px;
+			background: black; 
+			border-radius: 0%;
+
+		}
+		div.SectionB:hover { background: #779f19; 
+			.circle: background:  #777;}
+
+		.circle {
+			border-radius: 50%;
+			width: 66px;
+			height: 66px;
+			border: 1px solid #fff;
+			position:  absolute;
+			left: 12px;
+			top: 12px;
+			visibility: hidden;
+		}
+		.W {
+			background: #bcc;
+		}
+		.B {
+			background: #644;
+		}
+	</style>
+</head>
+<body>
+	<div class="circle W" id="W0" onclick="Click('W0')></div>
+	<div class="circle W" id="W1" onclick="Click('W1')"></div>
+	<div class="circle W" id="W2"></div>
+	<div class="circle W" id="W3"></div>
+	<div class="circle W" id="W4"></div>
+	<div class="circle W" id="W5"></div>
+	<div class="circle W" id="W6"></div>
+	<div class="circle W" id="W7"></div>
+	<div class="circle W" id="W8"></div>
+	<div class="circle W" id="W9"></div>
+	<div class="circle W" id="W10"></div>
+	<div class="circle W" id="W11"></div>
+	<div class="circle B" id="B0"></div>
+	<div class="circle B" id="B1"></div>
+	<div class="circle B" id="B2"></div>
+	<div class="circle B" id="B3"></div>
+	<div class="circle B" id="B4"></div>
+	<div class="circle B" id="B5"></div>
+	<div class="circle B" id="B6"></div>
+	<div class="circle B" id="B7"></div>
+	<div class="circle B" id="B8"></div>
+	<div class="circle B" id="B9"></div>
+	<div class="circle B" id="B10"></div>
+	<div class="circle B" id="B11"></div>
+	<table>
+		<tr>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="58" onclick="Click(58)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="60" onclick="Click(60)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="62" onclick="Click(62)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="64" onclick="Click(64)"> </div> </td>
+		</tr>
+		<tr>
+			<td> <div class="SectionB" id="49" onclick="Click(49)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="51" onclick="Click(51)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="53" onclick="Click(53)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="55" onclick="Click(55)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+		</tr>
+		<tr>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="42" onclick="Click(42)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="44" onclick="Click(44)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="46" onclick="Click(46)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="48" onclick="Click(48)"> </div> </td>
+		</tr>
+		<tr>
+			<td> <div class="SectionB" id="33" onclick="Click(33)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="35" onclick="Click(35)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="37" onclick="Click(37)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="39" onclick="Click(39)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+		</tr>
+		<tr>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="26" onclick="Click(26)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="28" onclick="Click(28)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="30" onclick="Click(30)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="32" onclick="Click(32)"> </div> </td>
+		</tr>
+		<tr>
+			<td> <div class="SectionB" id="17" onclick="Click(17)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="19" onclick="Click(19)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="21" onclick="Click(21)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="23" onclick="Click(23)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+		</tr>
+		<tr>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="10" onclick="Click(10)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="12" onclick="Click(12)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="14" onclick="Click(14)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="16" onclick="Click(16)"> </div> </td>
+		</tr>
+		<tr>
+			<td> <div class="SectionB" id="1" onclick="Click(1)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="3" onclick="Click(3)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="5" onclick="Click(5)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+			<td> <div class="SectionB" id="7" onclick="Click(7)"> </div> </td>
+			<td> <div class="SectionW"> </div> </td>
+		</tr>
+	</table>
+	<input type="button" name="BackWayButton" value="Отменить ход" onclick="BackWay()">
+	<input type="button" name="Start" value="Старт" onclick="Start()">
+</body>
+</html>
