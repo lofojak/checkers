@@ -6,6 +6,7 @@ var Bcoord = new Array(42, 44, 46, 48, 49, 51, 53, 55, 58, 60, 62, 64);
 var isStarted = false;
 
 function init() {
+	document.getElementBy
 	for (var i = 0; i < 65; i++) {
 		C[i] = document.getElementById('C'+i);
 	}
@@ -17,30 +18,27 @@ function init() {
 }
 
 function Start() {
-	for (var i = 0; i < 12; i++) {
-		W[i].style.visibility = "visible";
-		W[i].style.top = (558 - 78 * Math.floor((Wcoord[i] - 1) / 8)) + "px";
-		W[i].style.left = (12 + 79 * ((Wcoord[i] - 1) % 8)) + "px";
+	if (!isStarted) {
+		isStarted = true;
+		for (var i = 0; i < 12; i++) {
+			W[i].style.top = (558 - 78 * Math.floor((Wcoord[i] - 1) / 8)) + "px";
+			W[i].style.left = (12 + 79 * ((Wcoord[i] - 1) % 8)) + "px";
 
-		B[i].style.visibility = "visible";
-		B[i].style.top = (558 - 78 * Math.floor((Bcoord[i] - 1) / 8)) + "px";
-		B[i].style.left = (12 + 79 * ((Bcoord[i] - 1) % 8)) + "px";
-	}
-	isStarted = true;
-}
-
-function Click(id) {
-	if (isStarted) {
+			B[i].style.top = (558 - 78 * Math.floor((Bcoord[i] - 1) / 8)) + "px";
+			B[i].style.left = (12 + 79 * ((Bcoord[i] - 1) % 8)) + "px";
+		}
 		for (var i = 0; i < 12; i++) {
 			C[Wcoord[i]].innerHTML = "<div style='border-radius: 50%; width: 66px; height: 66px; border: 1px solid #fff; position: inherit; margin: 1px; background: #bcc;'><div>";
 		}
 		for (var i = 0; i < 12; i++) {
-			C[Bcoord[i]].innerHTML = "<div style='border-radius: 50%; width: 66px; height: 66px; border: 1px solid #fff; position: inherit; margin: 1px; background: #644;'><div>";
+			C[Bcoord[i]].innerHTML = "<div style='border-radius: 50%; width: 66px; height: 66px; border: 1px solid #888; position: inherit; margin: 1px; background: #644;'><div>";
 		}
-		for (var i = 1; i < 13; i++) {
-			W[i - 1].style.visibility = "hidden";
-			B[i - 1].style.visibility = "hidden";
-		}
+	}
+}
+
+function Click(id) {
+	if (isStarted) {
+
 	}
 	else {
 		alert('Please, start the game');
