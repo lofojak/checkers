@@ -4,17 +4,21 @@ div.SectionW {
 	margin-right: 5px;
 	background: #ccf; 
 }
+
 div.SectionB {
 	width: 70px; height: 70px;
 	display: inline-block;
 	margin-right: 5px;
 	background: black; 
 	border-radius: 0%;
-
+	div {
+		background: #000;
+	}
 }
+
 div.SectionB:hover { 
-				background: #779f19; 
-	.circle: 	background:  #777;}
+	background: #779f19;
+}
 
 .circle {
 	border-radius: 50%;
@@ -26,9 +30,9 @@ div.SectionB:hover {
 	top: 12px;
 	visibility: hidden;
 }
-.W {
+.circleW {
 	background: #bcc;
 }
-.B {
+.circleB {
 	background: #644;
 }
