@@ -3,7 +3,8 @@ var W = new Array();
 var B = new Array();
 var Wcoord = new Array(1, 3, 5, 7, 10, 12, 14, 16, 17, 19, 21, 23);
 var Bcoord = new Array(42, 44, 46, 48, 49, 51, 53, 55, 58, 60, 62, 64);
-var isStarted = false;
+var step = -1;
+var pervpoint;
 
 function init() {
 	document.getElementBy
@@ -17,9 +18,18 @@ function init() {
 	}
 }
 
+function isOnBoard(id) {
+	if ((id > 64) | (id < 1)) {
+		return false;
+	}
+	else {
+		return ((Math.floor((id - 1) / 8) + id - 1) % 2 == 0);
+	}
+}
+
 function Start() {
-	if (!isStarted) {
-		isStarted = true;
+	if (step === -1) {
+		step = 0;
 		for (var i = 0; i < 12; i++) {
 			W[i].style.top = (558 - 78 * Math.floor((Wcoord[i] - 1) / 8)) + "px";
 			W[i].style.left = (12 + 79 * ((Wcoord[i] - 1) % 8)) + "px";
@@ -37,10 +47,66 @@ function Start() {
 }
 
 function Click(id) {
-	if (isStarted) {
-
-	}
-	else {
-		alert('Please, start the game');
+	if (isOnBoard(id)) {
+		if (step >= 0) {
+			if (step % 4 == 0) {
+				if (Wcoord.indexOf(id) === -1) {
+					alert('Сейчас играют белые');
+				}
+				else {
+					pervpoint = id;
+					C[id].innerHTML = "<div style='border-radius: 50%; width: 66px; height: 66px; border: 1px solid #888; position: inherit; margin: 1px; background: #999;'><div>";
+					step++;
+				}
+			}
+			else if (step % 2 == 1) {
+				if (Wcoord.indexOf(pervpoint) >= 0) {
+					if (Wcoord.indexOf(id) >= 0) {
+						C[pervpoint].innerHTML = "<div style='border-radius: 50%; width: 66px; height: 66px; border: 1px solid #fff; position: inherit; margin: 1px; background: #bcc;'><div>";
+						pervpoint = id;
+						C[id].innerHTML = "<div style='border-radius: 50%; width: 66px; height: 66px; border: 1px solid #888; position: inherit; margin: 1px; background: #999;'><div>";
+					}
+					else if (Bcoord.indexOf(id) >= 0) {
+						alert('срубил');
+					}
+					else {
+						C[pervpoint].innerHTML = "";
+						C[id].innerHTML = "<div style='border-radius: 50%; width: 66px; height: 66px; border: 1px solid #888; position: inherit; margin: 1px; background: #bcc;'><div>";
+						Wcoord.splice(Wcoord.indexOf(pervpoint), 1, id);
+						step++;
+					}
+				} 
+				else if (Bcoord.indexOf(pervpoint) >= 0) {
+					if (Wcoord.indexOf(id) >= 0) {
+						alert('срубил');
+					}
+					else if (Bcoord.indexOf(id) >= 0) {
+						C[pervpoint].innerHTML = "<div style='border-radius: 50%; width: 66px; height: 66px; border: 1px solid #888; position: inherit; margin: 1px; background: #644;'><div>";
+						pervpoint = id;
+						C[id].innerHTML = "<div style='border-radius: 50%; width: 66px; height: 66px; border: 1px solid #888; position: inherit; margin: 1px; background: #a88;'><div>";
+					}
+					else {
+						C[pervpoint].innerHTML = "";
+						C[id].innerHTML = "<div style='border-radius: 50%; width: 66px; height: 66px; border: 1px solid #888; position: inherit; margin: 1px; background: #644;'><div>";
+						Bcoord.splice(Bcoord.indexOf(pervpoint), 1, id);
+						step++;
+					}
+				}
+				else alert('Error');
+			}
+			else {
+				if (Bcoord.indexOf(id) === -1) {
+ 					alert('Сейчас играют чёрные');
+				}
+				else {
+					pervpoint = id;
+					C[id].innerHTML = "<div style='border-radius: 50%; width: 66px; height: 66px; border: 1px solid #888; position: inherit; margin: 1px; background: #a88;'><div>";
+					step++;
+				}
+			}
+		}
+		else {
+			alert('Please, start the game');
+		}
 	}
 }
