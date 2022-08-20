@@ -52,7 +52,7 @@ function Start() {
 
 function Click(id) {
 	if (isOnBoard(id)) {
-		if (step >= 0) {
+		if (step >= 0) {/*
 			if (step % 4 == 0) {
 				//Этап выбора перемещения белых
 				if (Wcoord.indexOf(id) === -1) {
@@ -107,6 +107,63 @@ function Click(id) {
 					pervpoint = id;
 					C[id].innerHTML = "<div Class='PeshkaB PeshkaBPoint'><div>";
 					step++;
+				}
+			} */
+			if (step % 2 == 0) { //Ход белых
+				if (isNaN(pervpoint)) {
+					//Этап выбора перемещения белых
+					if (Wcoord.indexOf(id) === -1) {
+						alert('Сейчас играют белые');
+					}
+					else {
+						pervpoint = id;
+						C[id].innerHTML = "<div class='PeshkaW PeshkaWPoint'><div>";
+					}
+				}
+				else {
+					if (Wcoord.indexOf(id) >= 0) { // Случай перевыбора
+						C[pervpoint].innerHTML = "<div class='PeshkaW'><div>";
+						pervpoint = id;
+						C[id].innerHTML = "<div Class='PeshkaW PeshkaWPoint'><div>";
+					}
+					else if (Bcoord.indexOf(id) >= 0) { // Случай сруба вражеской пешки
+						alert('срубил');
+					}
+					else { //Случай хода
+						C[pervpoint].innerHTML = "";
+						C[id].innerHTML = "<div class='PeshkaW'><div>";;
+						Wcoord.splice(Wcoord.indexOf(pervpoint), 1, id);
+						step++;
+						pervpoint = NaN;
+					}
+				}
+			}
+			else { // Ход чёрных
+				if (isNaN(pervpoint)) {
+					if (Bcoord.indexOf(id) === -1) {
+	 					alert('Сейчас играют чёрные');
+					}
+					else {
+						pervpoint = id;
+						C[id].innerHTML = "<div Class='PeshkaB PeshkaBPoint'><div>";
+					}
+				}
+				else {
+					if (Wcoord.indexOf(id) >= 0) { //Случай сруба 
+						alert('срубил');
+					}
+					else if (Bcoord.indexOf(id) >= 0) { //Случай перевыбора
+						C[pervpoint].innerHTML = "<div Class='PeshkaB'><div>";
+						pervpoint = id;
+						C[id].innerHTML = "<div Class='PeshkaB PeshkaBPoint'><div>";
+					}
+					else { // случай хода 
+						C[pervpoint].innerHTML = "";
+						C[id].innerHTML = "<div Class='PeshkaB'><div>";
+						Bcoord.splice(Bcoord.indexOf(pervpoint), 1, id);
+						step++;
+						pervpoint = NaN;
+					}
 				}
 			}
 		}
