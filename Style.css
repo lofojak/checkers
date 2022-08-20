@@ -11,9 +11,6 @@ div.SectionB {
 	margin-right: 5px;
 	background: black; 
 	border-radius: 0%;
-	$div {
-		background: #000;
-	}
 }
 
 div.SectionB:hover { 
@@ -35,5 +32,30 @@ div.SectionB:hover {
 }
 .circleB {
 	border: 1px solid #888;
+	background: #644;
+}
+.PeshkaW {
+	border-radius: 50%;
+	width: 66px;
+	height: 66px;
+	border: 1px solid #fff;
+	position: inherit;
+	margin: 1px;
+	background: #bcc;
+}
+.PeshkaB {
+	border-radius: 50%;
+	width: 66px;
+	height: 66px;
+	border: 1px solid #888;
+	position: inherit;
+	margin: 1px;
+	background: #644;
+}
+.PeshkaWPoint {
+	background: #888;
+}
+
+.PeshkaBPoint {
 	background: #644;
 }
