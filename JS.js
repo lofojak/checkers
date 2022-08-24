@@ -46,6 +46,34 @@ function Start() {
 	}
 }
 
+function isCanStep(pervpoint, nextpoint) {
+	var isWhite;
+	if (Wcoord.indexOf(pervpoint) === -1) {isWhite = true;}
+	else if (Bcoord.indexOf(pervpoint) === -1) {isWhite = false;}
+	if (!isNaN(isWhite)) {
+		var a1 = Math.floor((pervpoint - 1) / 8);	// a - координата по вертикали
+		var a2 = Math.floor((nextpoint - 1) / 8); 
+		var b1 = (pervpoint - 1) % 8;				// b - координата по горизонтали
+		var b2 = (nextpoint - 1) % 8;
+		if (isWhite) {
+			if ((a1 - a2 == 1) && (Math.abs(b1 - b2) == 1)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}	// отсекаем ходы назад
+		else {
+			if ((a2 - a1 == 1) && (Math.abs(b1 - b2) == 1)) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+}
+
 function Click(id) {
 	if (isOnBoard(id)) {
 		if (step >= 0) {
@@ -69,11 +97,16 @@ function Click(id) {
 						alert('срубил');
 					}
 					else {										// Случай хода
-						C[pervpoint].innerHTML = "";
-						C[id].innerHTML = "<div class='PeshkaW'><div>";;
-						Wcoord.splice(Wcoord.indexOf(pervpoint), 1, id);
-						step++;
-						pervpoint = NaN;
+						if (isCanStep(pervpoint, id)) {
+							C[pervpoint].innerHTML = "";
+							C[id].innerHTML = "<div class='PeshkaW'><div>";;
+							Wcoord.splice(Wcoord.indexOf(pervpoint), 1, id);
+							step++;
+							pervpoint = NaN;
+						}
+						else {
+							alert('Так нельзя ходить');
+						}
 					}
 				}
 			}
@@ -97,11 +130,16 @@ function Click(id) {
 						C[id].innerHTML = "<div Class='PeshkaB PeshkaBPoint'><div>";
 					}
 					else {										// Случай хода 
-						C[pervpoint].innerHTML = "";
-						C[id].innerHTML = "<div Class='PeshkaB'><div>";
-						Bcoord.splice(Bcoord.indexOf(pervpoint), 1, id);
-						step++;
-						pervpoint = NaN;
+						if (isCanStep(pervpoint, id)) {
+							C[pervpoint].innerHTML = "";
+							C[id].innerHTML = "<div Class='PeshkaB'><div>";
+							Bcoord.splice(Bcoord.indexOf(pervpoint), 1, id);
+							step++;
+							pervpoint = NaN;
+						}
+						else {
+							alert('Так нельзя ходить');
+						}
 					}
 				}
 			}
