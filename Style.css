@@ -52,10 +52,10 @@ div.SectionB:hover {
 	margin: 1px;
 	background: #644;
 }
-.PeshkaWPoint {
+.PeshkaWClicked {
 	background: #888;
 }
 
-.PeshkaBPoint {
+.PeshkaBClicked {
 	background: #533;
 }

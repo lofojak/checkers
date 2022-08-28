@@ -1,151 +1,193 @@
 var C = new Array();
-var W = new Array();
-var B = new Array();
-var Wcoord = new Array(1, 3, 5, 7, 10, 12, 14, 16, 17, 19, 21, 23);
-var Bcoord = new Array(42, 44, 46, 48, 49, 51, 53, 55, 58, 60, 62, 64);
+var Wcoord = new Array();
+var Bcoord = new Array();
 var step = -1;
-var pervpoint;
+var Length = 8;
 
-function init() {
-	document.getElementBy
-	for (var i = 0; i < 65; i++) {
-		C[i] = document.getElementById('C'+i);
+function isOnBoard(id, WhatisCheck) {
+	if (WhatisCheck === "cell") {
+		if ((id[0] < Length) && (id[1] < Length)) {
+			if ((id[0] % 2) + (id[1] % 2) === 1) 	{return "Black";} 
+			else 									{return "White";}
+		}
+		else {return undefined;}
 	}
+	else if (WhatisCheck === "checker") {
 
-	for (var i = 0; i < 13; i++) {
-		W[i] = document.getElementById('W'+i);
-		B[i] = document.getElementById('B'+i);
 	}
 }
 
-function isOnBoard(id) {
-	if ((id > 64) | (id < 1)) {
-		return false;
+function SearchArr(Arr1, Arr2) {
+	var ret = -1;
+	for (var i = 0; i < Arr1.length; i++) {
+		if ((Arr1[i][0] == Arr2[0]) && (Arr1[i][1] == Arr2[1])) {
+			ret = i;
+			break;
+		}
 	}
-	else {
-		return ((Math.floor((id - 1) / 8) + id - 1) % 2 == 0);
+	return ret;
+}
+
+function Table() {
+	//Length = prompt();
+	document.write('<table name="Set"> <tbody>');
+	for (var i = 0; i < Length; i++) {
+		document.write('<tr>');
+		for (var j = 0; j < Length; j++) {
+			document.write('<td> <div class="Section' + (((i + j) % 2 === 0) ? "W" : "B") + '" id="C:' + i + ' ' + j  + '" onclick="Click([' + i + ', '+ j + '])"> </div> </td>');
+		}
+		document.write('</tr>');
 	}
+	document.write('</tbody> </table>');
+}
+
+function init() {
+	for (var i = 0; i < Length; i++) {
+		C[i] = new Array();
+		for (j = 0; j < Length; j++ ) {
+			C[i].push(document.getElementById('C:' + i + ' ' + j));
+		}
+	}
+}
+
+function draw() {
+	C.forEach(i =>{
+		i.forEach(j => {
+			var id = [parseInt(j.id.substring(2, j.id.indexOf(' '))), parseInt(j.id.substring(j.id.indexOf(' ')))];
+			if (~SearchArr(Wcoord, id)) {
+				C[id[0]][id[1]].innerHTML = "<div class='PeshkaW'></div>";
+			}
+			if (~SearchArr(Bcoord, id)) {
+				C[id[0]][id[1]].innerHTML = "<div class='PeshkaB'></div>";
+			}
+		});
+	});
 }
 
 function Start() {
-	if (step === -1) {
-		step = 0;
-		for (var i = 0; i < 12; i++) {
-			W[i].style.top = (558 - 78 * Math.floor((Wcoord[i] - 1) / 8)) + "px";
-			W[i].style.left = (12 + 79 * ((Wcoord[i] - 1) % 8)) + "px";
+	step = 0;
+	var i = new Array(0, 0);
+	while (Bcoord.length < (Length - 2) * Length / 4) {
+		if (isOnBoard(i, "cell") === "Black") {
+			Bcoord.push(i.slice());
+		}
+		i[1]++;
+		if (i[1] > Length) {
+			i[1] = 0;
+			i[0]++;
+		}
+	} 
 
-			B[i].style.top = (558 - 78 * Math.floor((Bcoord[i] - 1) / 8)) + "px";
-			B[i].style.left = (12 + 79 * ((Bcoord[i] - 1) % 8)) + "px";
+	i[0] = Length;
+	i[1] = 0;
+	while (Wcoord.length < (Length - 2) * Length / 4) {
+		if (isOnBoard(i, "cell") === "Black") {
+			Wcoord.push(i.slice());
 		}
-		for (var i = 0; i < 12; i++) {
-			C[Wcoord[i]].innerHTML = "<div class='PeshkaW'><div>";
+		i[1]++;
+		if (i[1] > Length) {
+			i[1] = 0;
+			i[0]--;
 		}
-		for (var i = 0; i < 12; i++) {
-			C[Bcoord[i]].innerHTML = "<div class='PeshkaB'><div>";
+	}
+	draw();
+}
+
+function isCanStep(pervpoint, nextpoint, isWhite) {
+	if (isWhite) {
+		if ((pervpoint[0] - nextpoint[0] == 1) && (Math.abs(pervpoint[1] - nextpoint[1]) == 1)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}	// отсекаем ходы назад
+	else {
+		if ((nextpoint[0] - pervpoint[0] == 1) && (Math.abs(pervpoint[1] - nextpoint[1]) == 1)) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 }
 
-function isCanStep(pervpoint, nextpoint) {
-	var isWhite;
-	if (Wcoord.indexOf(pervpoint) === -1) {isWhite = true;}
-	else if (Bcoord.indexOf(pervpoint) === -1) {isWhite = false;}
-	if (!isNaN(isWhite)) {
-		var a1 = Math.floor((pervpoint - 1) / 8);	// a - координата по вертикали
-		var a2 = Math.floor((nextpoint - 1) / 8); 
-		var b1 = (pervpoint - 1) % 8;				// b - координата по горизонтали
-		var b2 = (nextpoint - 1) % 8;
-		if (isWhite) {
-			if ((a1 - a2 == 1) && (Math.abs(b1 - b2) == 1)) {
-				return true;
+var pervpoint;
+
+function Click(ClicledPoint) {
+	if (step >= 0) {
+		if (step % 2 === 0) { 				// Ход белых
+			if (pervpoint === undefined) {					// Этап выбора шашки, которая будет делать ход
+				if (SearchArr(Wcoord, ClicledPoint) === -1) {
+					console.log('Clicked to not white checker!');
+				}
+				else {
+					console.log("Move from " + ClicledPoint);
+					pervpoint = ClicledPoint;
+					C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div class='PeshkaW PeshkaWClicked'><div>";
+				}
 			}
-			else {
-				return false;
+			else {									// Этап выбора пути, куда будет делать ход шашка
+				if (~SearchArr(Wcoord, ClicledPoint)) {					// Случай перевыбора
+					console.log("Move from " + ClicledPoint);
+					C[pervpoint[0]][pervpoint[1]].innerHTML = "<div class='PeshkaW'><div>";
+					pervpoint = ClicledPoint;
+					C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div Class='PeshkaW PeshkaWClicked'><div>";
+				}
+				else if (~SearchArr(Bcoord, ClicledPoint)) {			// Случай сруба вражеской пешки
+					alert('срубил');
+				}
+				else {										// Случай хода
+					if (isCanStep(pervpoint, ClicledPoint, true)) {
+						console.log("to " + ClicledPoint + " is done!");
+						C[pervpoint[0]][pervpoint[1]].innerHTML = "";
+						C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div class='PeshkaW'><div>";;
+						Wcoord.splice(SearchArr(Wcoord, pervpoint), 1, ClicledPoint);
+						step++;
+						pervpoint = undefined;
+					}
+					else {
+						alert('Так нельзя ходить');
+					}
+				}
 			}
-		}	// отсекаем ходы назад
-		else {
-			if ((a2 - a1 == 1) && (Math.abs(b1 - b2) == 1)) {
-				return true;
+		}
+		else {								// Ход чёрных
+			if (pervpoint === undefined) {					// Этап выбора шашки, которая будет делать ход
+				if (SearchArr(Bcoord, ClicledPoint) === -1) {
+					console.log('Clicked to not black checker!');
+				}
+				else {
+					console.log("Move from " + ClicledPoint);
+					pervpoint = ClicledPoint;
+					C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div Class='PeshkaB PeshkaBClicked'><div>";
+				}
 			}
-			else {
-				return false;
+			else {									// Этап выбора пути хода шашки
+				if (~SearchArr(Wcoord, ClicledPoint)) {					// Случай сруба 
+					alert('срубил');
+				}
+				else if (~SearchArr(Bcoord, ClicledPoint)) {				// Случай перевыбора
+					C[pervpoint[0]][pervpoint[1]].innerHTML = "<div Class='PeshkaB'><div>";
+					pervpoint = ClicledPoint;
+					C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div Class='PeshkaB PeshkaBClicked'><div>";
+				}
+				else {										// Случай хода 
+					if (isCanStep(pervpoint, ClicledPoint)) {
+						C[pervpoint[0]][pervpoint[1]].innerHTML = "";
+						C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div Class='PeshkaB'><div>";
+						Bcoord.splice(SearchArr(Bcoord, pervpoint), 1, ClicledPoint);
+						step++;
+						pervpoint = undefined;
+					}
+					else {
+						alert('Так нельзя ходить');
+					}
+				}
 			}
 		}
 	}
-}
-
-function Click(id) {
-	if (isOnBoard(id)) {
-		if (step >= 0) {
-			if (step % 2 == 0) { 				// Ход белых
-				if (isNaN(pervpoint)) {					// Этап выбора шашки, которая будет делать ход
-					if (Wcoord.indexOf(id) === -1) {
-						alert('Сейчас играют белые');
-					}
-					else {
-						pervpoint = id;
-						C[id].innerHTML = "<div class='PeshkaW PeshkaWPoint'><div>";
-					}
-				}
-				else {									// Этап выбора пути, куда будет делать ход шашка
-					if (Wcoord.indexOf(id) >= 0) {				// Случай перевыбора
-						C[pervpoint].innerHTML = "<div class='PeshkaW'><div>";
-						pervpoint = id;
-						C[id].innerHTML = "<div Class='PeshkaW PeshkaWPoint'><div>";
-					}
-					else if (Bcoord.indexOf(id) >= 0) {			// Случай сруба вражеской пешки
-						alert('срубил');
-					}
-					else {										// Случай хода
-						if (isCanStep(pervpoint, id)) {
-							C[pervpoint].innerHTML = "";
-							C[id].innerHTML = "<div class='PeshkaW'><div>";;
-							Wcoord.splice(Wcoord.indexOf(pervpoint), 1, id);
-							step++;
-							pervpoint = NaN;
-						}
-						else {
-							alert('Так нельзя ходить');
-						}
-					}
-				}
-			}
-			else {								// Ход чёрных
-				if (isNaN(pervpoint)) {					// Этап выбора шашки, которая будет делать ход
-					if (Bcoord.indexOf(id) === -1) {
-	 					alert('Сейчас играют чёрные');
-					}
-					else {
-						pervpoint = id;
-						C[id].innerHTML = "<div Class='PeshkaB PeshkaBPoint'><div>";
-					}
-				}
-				else {									// Этап выбора пути хода шашки
-					if (Wcoord.indexOf(id) >= 0) {				// Случай сруба 
-						alert('срубил');
-					}
-					else if (Bcoord.indexOf(id) >= 0) {			// Случай перевыбора
-						C[pervpoint].innerHTML = "<div Class='PeshkaB'><div>";
-						pervpoint = id;
-						C[id].innerHTML = "<div Class='PeshkaB PeshkaBPoint'><div>";
-					}
-					else {										// Случай хода 
-						if (isCanStep(pervpoint, id)) {
-							C[pervpoint].innerHTML = "";
-							C[id].innerHTML = "<div Class='PeshkaB'><div>";
-							Bcoord.splice(Bcoord.indexOf(pervpoint), 1, id);
-							step++;
-							pervpoint = NaN;
-						}
-						else {
-							alert('Так нельзя ходить');
-						}
-					}
-				}
-			}
-		}
-		else {
-			alert('Please, start the game');
-		}
+	else {
+		Start();
 	}
 }
