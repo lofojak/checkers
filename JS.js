@@ -2,11 +2,12 @@ var C = new Array();
 var Wcoord = new Array();
 var Bcoord = new Array();
 var step = -1;
-var Length = 8;
+var NumberCell = 8;
+var Pervpoint;
 
 function isOnBoard(id, WhatisCheck) {
 	if (WhatisCheck === "cell") {
-		if ((id[0] < Length) && (id[1] < Length)) {
+		if ((id[0] < NumberCell) && (id[1] < NumberCell)) {
 			if ((id[0] % 2) + (id[1] % 2) === 1) 	{return "Black";} 
 			else 									{return "White";}
 		}
@@ -29,11 +30,11 @@ function SearchArr(Arr1, Arr2) {
 }
 
 function Table() {
-	//Length = prompt();
+	//NumberCell = prompt();
 	document.write('<table name="Set"> <tbody>');
-	for (var i = 0; i < Length; i++) {
+	for (var i = 0; i < NumberCell; i++) {
 		document.write('<tr>');
-		for (var j = 0; j < Length; j++) {
+		for (var j = 0; j < NumberCell; j++) {
 			document.write('<td> <div class="Section' + (((i + j) % 2 === 0) ? "W" : "B") + '" id="C:' + i + ' ' + j  + '" onclick="Click([' + i + ', '+ j + '])"> </div> </td>');
 		}
 		document.write('</tr>');
@@ -42,9 +43,9 @@ function Table() {
 }
 
 function init() {
-	for (var i = 0; i < Length; i++) {
+	for (var i = 0; i < NumberCell; i++) {
 		C[i] = new Array();
-		for (j = 0; j < Length; j++ ) {
+		for (j = 0; j < NumberCell; j++ ) {
 			C[i].push(document.getElementById('C:' + i + ' ' + j));
 		}
 	}
@@ -57,35 +58,47 @@ function draw() {
 			if (~SearchArr(Wcoord, id)) {
 				C[id[0]][id[1]].innerHTML = "<div class='PeshkaW'></div>";
 			}
-			if (~SearchArr(Bcoord, id)) {
+			else if (~SearchArr(Bcoord, id)) {
 				C[id[0]][id[1]].innerHTML = "<div class='PeshkaB'></div>";
 			}
+			else {
+				C[id[0]][id[1]].innerHTML = "<div> </div>"
+			}
+			
 		});
 	});
+	if (Pervpoint != undefined) {
+		if (SearchArr(Wcoord, Pervpoint) >= 0) {
+			C[Pervpoint[0]][Pervpoint[1]].innerHTML = "<div class='PeshkaW PeshkaWClicked'><div>";
+		}
+		if (SearchArr(Bcoord, Pervpoint) >= 0) {
+			C[Pervpoint[0]][Pervpoint[1]].innerHTML = "<div Class='PeshkaB PeshkaBClicked'><div>";
+		}
+	}
 }
 
 function Start() {
 	step = 0;
 	var i = new Array(0, 0);
-	while (Bcoord.length < (Length - 2) * Length / 4) {
+	while (Bcoord.length < (NumberCell - 2) * NumberCell / 4) {
 		if (isOnBoard(i, "cell") === "Black") {
 			Bcoord.push(i.slice());
 		}
 		i[1]++;
-		if (i[1] > Length) {
+		if (i[1] > NumberCell) {
 			i[1] = 0;
 			i[0]++;
 		}
 	} 
 
-	i[0] = Length;
+	i[0] = NumberCell;
 	i[1] = 0;
-	while (Wcoord.length < (Length - 2) * Length / 4) {
+	while (Wcoord.length < (NumberCell - 2) * NumberCell / 4) {
 		if (isOnBoard(i, "cell") === "Black") {
 			Wcoord.push(i.slice());
 		}
 		i[1]++;
-		if (i[1] > Length) {
+		if (i[1] > NumberCell) {
 			i[1] = 0;
 			i[0]--;
 		}
@@ -95,7 +108,10 @@ function Start() {
 
 function isCellFree(point) {
 	if (point.length === 2)	 {
-		if (SearchArr(Wcoord, point) >= 0) {
+		if ((point[0] >= NumberCell) || (point[1] >= NumberCell) || (point[0] < 0) || (point[1] < 0)) {
+			return false;
+		}
+		else if (SearchArr(Wcoord, point) >= 0) {
 			return false;
 		}
 		else if (SearchArr(Bcoord, point) >= 0) {
@@ -144,7 +160,54 @@ function isCanBit(Pervpoint, mediumpoint, nextpoint) {
 	}
 }
 
-var Pervpoint;
+function isCanBitMore(Cell, isWhite) {
+	if (isWhite) {
+		if (SearchArr(Bcoord, [Cell[0]+1, Cell[1]+1]) >= 0) {
+			if (isCellFree([Cell[0]+2, Cell[1]+2])) {
+				return true;
+			}
+		}
+		else if (SearchArr(Bcoord, [Cell[0]+1, Cell[1]-1]) >= 0) {
+			if (isCellFree([Cell[0]+2, Cell[1]-2])) {
+				return true;
+			}
+		}
+		else if (SearchArr(Bcoord, [Cell[0]-1, Cell[1]+1]) >= 0) {
+			if (isCellFree([Cell[0]-2, Cell[1]+2])) {
+				return true;
+			}
+		}
+		else if (SearchArr(Bcoord, [Cell[0]-1, Cell[1]-1]) >= 0) {
+			if (isCellFree([Cell[0]-2, Cell[1]-2])) {
+				return true;
+			}
+		}
+		else {return false;}
+	}
+	else {
+		if (SearchArr(Wcoord, [Cell[0]+1, Cell[1]+1]) >= 0) {
+			if (isCellFree([Cell[0]+2, Cell[1]+2])) {
+				return true;
+			}
+		}
+		else if (SearchArr(Wcoord, [Cell[0]+1, Cell[1]-1]) >= 0) {
+			if (isCellFree([Cell[0]+2, Cell[1]-2])) {
+				return true;
+			}
+		}
+		else if (SearchArr(Wcoord, [Cell[0]-1, Cell[1]+1]) >= 0) {
+			if (isCellFree([Cell[0]-2, Cell[1]+2])) {
+				return true;
+			}
+		}
+		else if (SearchArr(Wcoord, [Cell[0]-1, Cell[1]-1]) >= 0) {
+			if (isCellFree([Cell[0]-2, Cell[1]-2])) {
+				return true;
+			}
+		}
+		else {return false;}
+	}
+}
 
 function Click(ClicledPoint) {
 	if (step >= 0) {
@@ -180,11 +243,18 @@ function Click(ClicledPoint) {
 					{
 						Wcoord[SearchArr(Wcoord, Pervpoint)] = nextpoint;
 						Bcoord.splice(SearchArr(Bcoord, [Pervpoint[0] + directon[0], Pervpoint[1] + directon[1]]), 1);
-						C[nextpoint[0]][nextpoint[1]].innerHTML = "<div class='PeshkaW'><div>";
+
 						C[Pervpoint[0] + directon[0]][Pervpoint[1] + directon[1]].innerHTML = "";
 						C[Pervpoint[0]][Pervpoint[1]].innerHTML = "";
-						Pervpoint = undefined;
-						step++;
+						if (!isCanBitMore(nextpoint, true)) {
+							Pervpoint = undefined;
+							step++;
+							C[nextpoint[0]][nextpoint[1]].innerHTML = "<div class='PeshkaW'><div>";
+						}
+						else {
+							Pervpoint = nextpoint;
+							C[nextpoint[0]][nextpoint[1]].innerHTML = "<div Class='PeshkaW PeshkaWClicked'><div>";
+						}
 					}
 				}
 			}
@@ -221,11 +291,17 @@ function Click(ClicledPoint) {
 					{
 						Bcoord[SearchArr(Bcoord, Pervpoint)] = nextpoint;
 						Wcoord.splice(SearchArr(Wcoord, [Pervpoint[0] + directon[0], Pervpoint[1] + directon[1]]), 1);
-						C[nextpoint[0]][nextpoint[1]].innerHTML = "<div class='PeshkaB'><div>";
 						C[Pervpoint[0] + directon[0]][Pervpoint[1] + directon[1]].innerHTML = "";
 						C[Pervpoint[0]][Pervpoint[1]].innerHTML = "";
-						Pervpoint = undefined;
-						step++;
+						if (!isCanBitMore(nextpoint, false)) {
+							Pervpoint = undefined;
+							step++;
+							C[nextpoint[0]][nextpoint[1]].innerHTML = "<div class='PeshkaB'><div>";
+						}
+						else {
+							Pervpoint = nextpoint;
+							C[nextpoint[0]][nextpoint[1]].innerHTML = "<div Class='PeshkaB PeshkaBClicked'><div>";
+						}
 					}
 				}
 			}
