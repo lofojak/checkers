@@ -52,6 +52,12 @@ div.SectionB:hover {
 	margin: 1px;
 	background: #644;
 }
+.PeshkaWDamki {
+	background: #fff;
+}
+.PeshkaBDamki {
+	background: #000;
+}
 .PeshkaWClicked {
 	background: #888;
 }

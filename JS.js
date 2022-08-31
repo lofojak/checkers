@@ -1,5 +1,5 @@
 var C = new Array();
-var Wcoord = new Array();
+var Wcoord = new Array(); // массив из векторов [int x, int y, boolean isDamka]
 var Bcoord = new Array();
 var step = -1;
 var NumberCell = 8;
@@ -51,35 +51,74 @@ function init() {
 	}
 }
 
-function draw() {
-	C.forEach(i =>{
-		i.forEach(j => {
-			var id = [parseInt(j.id.substring(2, j.id.indexOf(' '))), parseInt(j.id.substring(j.id.indexOf(' ')))];
-			if (~SearchArr(Wcoord, id)) {
-				C[id[0]][id[1]].innerHTML = "<div class='PeshkaW'></div>";
-			}
-			else if (~SearchArr(Bcoord, id)) {
-				C[id[0]][id[1]].innerHTML = "<div class='PeshkaB'></div>";
-			}
-			else {
-				C[id[0]][id[1]].innerHTML = "<div> </div>"
-			}
-			
+function draw(point) {
+	if (point === undefined) {
+		C.forEach(i =>{
+			i.forEach(j => {
+				var id = [parseInt(j.id.substring(2, j.id.indexOf(' '))), parseInt(j.id.substring(j.id.indexOf(' ')))];
+				if (~SearchArr(Wcoord, id)) {
+					C[id[0]][id[1]].innerHTML = "<div class='PeshkaW'></div>";
+				}
+				else if (~SearchArr(Bcoord, id)) {
+					C[id[0]][id[1]].innerHTML = "<div class='PeshkaB'></div>";
+				}
+				else {
+					C[id[0]][id[1]].innerHTML = "<div> </div>"
+				}
+				
+			});
 		});
-	});
-	if (Pervpoint != undefined) {
-		if (SearchArr(Wcoord, Pervpoint) >= 0) {
-			C[Pervpoint[0]][Pervpoint[1]].innerHTML = "<div class='PeshkaW PeshkaWClicked'><div>";
+		if (Pervpoint != undefined) {
+			if (SearchArr(Wcoord, Pervpoint) >= 0) {
+				C[Pervpoint[0]][Pervpoint[1]].innerHTML = "<div class='PeshkaW PeshkaWClicked'><div>";
+			}
+			if (SearchArr(Bcoord, Pervpoint) >= 0) {
+				C[Pervpoint[0]][Pervpoint[1]].innerHTML = "<div Class='PeshkaB PeshkaBClicked'><div>";
+			}
 		}
-		if (SearchArr(Bcoord, Pervpoint) >= 0) {
-			C[Pervpoint[0]][Pervpoint[1]].innerHTML = "<div Class='PeshkaB PeshkaBClicked'><div>";
+	}
+	else {
+		var text;
+		var pos = SearchArr(Wcoord, point);
+		if (pos >= 0) {
+			text = "PeshkaW";
+			if (Wcoord[pos][2]) {
+				text = "PeshkaW PeshkaWDamki"
+			}
 		}
+		else {
+			var pos = SearchArr(Bcoord, point);
+			if (pos >= 0) {
+				text = "PeshkaB"
+				if (Bcoord[pos][2]) {
+					text = "PeshkaB PeshkaBDamki"
+				}
+			}
+			else {text = "";}
+		}
+		if (Pervpoint != undefined) {
+			if ((Pervpoint[0] == point[0]) && (Pervpoint[1] == point[1])) {
+				if (text == "PeshkaW") {
+					text = "PeshkaW PeshkaWClicked";
+				}
+				if (text == "PeshkaB") {
+					text = "PeshkaB PeshkaBClicked";
+				}
+			}
+		}
+		if (text != "") {
+			C[point[0]][point[1]].innerHTML = "<div Class='" + text + "'><div>"
+		}
+		else {
+			C[point[0]][point[1]].innerHTML = "";
+		}
+
 	}
 }
 
 function Start() {
 	step = 0;
-	var i = new Array(0, 0);
+	var i = new Array(0, 0, false);
 	while (Bcoord.length < (NumberCell - 2) * NumberCell / 4) {
 		if (isOnBoard(i, "cell") === "Black") {
 			Bcoord.push(i.slice());
@@ -224,8 +263,14 @@ function Click(ClicledPoint) {
 			else if (isCanStep(Pervpoint, ClicledPoint, true)) {							// Случай хода
 				C[Pervpoint[0]][Pervpoint[1]].innerHTML = "";
 				C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div class='PeshkaW'><div>";
-				Wcoord.splice(SearchArr(Wcoord, Pervpoint), 1, ClicledPoint);
 				step++;
+				Pervpoint = Wcoord[(SearchArr(Wcoord, Pervpoint))];
+				if (ClicledPoint[0] == 0) { // тест на дамку
+					Wcoord.splice(SearchArr(Wcoord, Pervpoint), 1, [ClicledPoint[0], ClicledPoint[1], true]);
+				}
+				else {
+					Wcoord.splice(SearchArr(Wcoord, Pervpoint), 1, [ClicledPoint[0], ClicledPoint[1], Pervpoint[2]]);
+				}
 				Pervpoint = undefined;
 			}
 			else {
@@ -241,11 +286,18 @@ function Click(ClicledPoint) {
 					if (isCanBit(Pervpoint, [Pervpoint[0] + 	directon[0], Pervpoint[1] +		directon[1]],
 											[Pervpoint[0] + 2 *	directon[0], Pervpoint[1] + 2 * directon[1]]))
 					{
-						Wcoord[SearchArr(Wcoord, Pervpoint)] = nextpoint;
 						Bcoord.splice(SearchArr(Bcoord, [Pervpoint[0] + directon[0], Pervpoint[1] + directon[1]]), 1);
 
 						C[Pervpoint[0] + directon[0]][Pervpoint[1] + directon[1]].innerHTML = "";
 						C[Pervpoint[0]][Pervpoint[1]].innerHTML = "";
+						Pervpoint = Wcoord[(SearchArr(Wcoord, Pervpoint))];
+						if (nextpoint[0] == 0) { // тест на дамку
+							Wcoord.splice(SearchArr(Wcoord, Pervpoint), 1, [nextpoint[0], nextpoint[1], true]);
+						}
+						else {
+							Wcoord.splice(SearchArr(Wcoord, Pervpoint), 1, [nextpoint[0], nextpoint[1], Pervpoint[2]]);
+						}
+						Pervpoint = undefined;
 						if (!isCanBitMore(nextpoint, true)) {
 							Pervpoint = undefined;
 							step++;
