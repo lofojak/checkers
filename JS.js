@@ -3,7 +3,7 @@ var Wcoord = new Array(); // массив из векторов [int x, int y, b
 var Bcoord = new Array();
 var step = -1;
 var NumberCell = 8;
-var Pervpoint;
+var Pickcell;
 
 function isOnBoard(id, WhatisCheck) {
 	if (WhatisCheck === "cell") {
@@ -68,12 +68,12 @@ function draw(point) {
 				
 			});
 		});
-		if (Pervpoint != undefined) {
-			if (SearchArr(Wcoord, Pervpoint) >= 0) {
-				C[Pervpoint[0]][Pervpoint[1]].innerHTML = "<div class='PeshkaW PeshkaWClicked'><div>";
+		if (Pickcell != undefined) {
+			if (SearchArr(Wcoord, Pickcell) >= 0) {
+				C[Pickcell[0]][Pickcell[1]].innerHTML = "<div class='PeshkaW PeshkaWClicked'><div>";
 			}
-			if (SearchArr(Bcoord, Pervpoint) >= 0) {
-				C[Pervpoint[0]][Pervpoint[1]].innerHTML = "<div Class='PeshkaB PeshkaBClicked'><div>";
+			if (SearchArr(Bcoord, Pickcell) >= 0) {
+				C[Pickcell[0]][Pickcell[1]].innerHTML = "<div Class='PeshkaB PeshkaBClicked'><div>";
 			}
 		}
 	}
@@ -96,13 +96,19 @@ function draw(point) {
 			}
 			else {text = "";}
 		}
-		if (Pervpoint != undefined) {
-			if ((Pervpoint[0] == point[0]) && (Pervpoint[1] == point[1])) {
+		if (Pickcell != undefined) {
+			if ((Pickcell[0] == point[0]) && (Pickcell[1] == point[1])) {
 				if (text == "PeshkaW") {
 					text = "PeshkaW PeshkaWClicked";
 				}
 				if (text == "PeshkaB") {
 					text = "PeshkaB PeshkaBClicked";
+				}
+				if (text == "PeshkaW PeshkaWDamki") {
+					text = "PeshkaW PeshkaWDamkiClicked";
+				}
+				if (text == "PeshkaB PeshkaBDamki") {
+					text = "PeshkaB PeshkaBDamkiClicked";
 				}
 			}
 		}
@@ -166,32 +172,54 @@ function isCellFree(point) {
 	}
 }
 
-function isCanStep(Pervpoint, nextpoint, isWhite) {
+function isCanStep(Pickcell, nextpoint, isWhite) {
 	if (isWhite) {
-		if ((Pervpoint[0] - nextpoint[0] == 1) && (Math.abs(Pervpoint[1] - nextpoint[1]) == 1) && isCellFree(nextpoint)) {
-			return true;
+		var pos = SearchArr(Wcoord, Pickcell);
+		if (Wcoord[pos][2]) {
+			if ((Math.abs(Pickcell[0] - nextpoint[0]) == Math.abs(Pickcell[1] - nextpoint[1])) && isCellFree(nextpoint)) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 		else {
-			return false;
+			if ((Pickcell[0] - nextpoint[0] == 1) && (Math.abs(Pickcell[1] - nextpoint[1]) == 1) && isCellFree(nextpoint)) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 	}	// отсекаем ходы назад
 	else {
-		if ((nextpoint[0] - Pervpoint[0] == 1) && (Math.abs(Pervpoint[1] - nextpoint[1]) == 1) && isCellFree(nextpoint)) {
-			return true;
+		var pos = SearchArr(Bcoord, Pickcell);
+		if (Wcoord[pos][2]) {
+			if ((Math.abs(Pickcell[0] - nextpoint[0]) == Math.abs(Pickcell[1] - nextpoint[1])) && isCellFree(nextpoint)) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 		else {
-			return false;
+			if ((nextpoint[0] - Pickcell[0] == 1) && (Math.abs(Pickcell[1] - nextpoint[1]) == 1) && isCellFree(nextpoint)) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 	}
 }
 
 
-function isCanBit(Pervpoint, mediumpoint, nextpoint) {
+function isCanBit(Pickcell, mediumpoint, nextpoint) {
 
-	if ((SearchArr(Wcoord, Pervpoint) >= 0) && (SearchArr(Bcoord, mediumpoint) >= 0) && isCellFree(nextpoint)) {
+	if ((SearchArr(Wcoord, Pickcell) >= 0) && (SearchArr(Bcoord, mediumpoint) >= 0) && isCellFree(nextpoint)) {
 		return true;
 	}
-	else if ((SearchArr(Bcoord, Pervpoint) >= 0) && (SearchArr(Wcoord, mediumpoint) >= 0) && isCellFree(nextpoint)) {
+	else if ((SearchArr(Bcoord, Pickcell) >= 0) && (SearchArr(Wcoord, mediumpoint) >= 0) && isCellFree(nextpoint)) {
 		return true;
 	}
 	else {
@@ -251,109 +279,119 @@ function isCanBitMore(Cell, isWhite) {
 function Click(ClicledPoint) {
 	if (step >= 0) {
 		if (step % 2 === 0) { 				// Ход белых
-			if ((Pervpoint === undefined) && (SearchArr(Wcoord, ClicledPoint) >= 0)) {		// Этап выбора шашки, которая будет делать ход
-				Pervpoint = ClicledPoint;
-				C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div class='PeshkaW PeshkaWClicked'><div>";
+			if ((Pickcell === undefined) && (SearchArr(Wcoord, ClicledPoint) >= 0)) {		// Этап выбора шашки, которая будет делать ход
+				Pickcell = ClicledPoint;
+				draw(ClicledPoint);
 			}
 			else if (~SearchArr(Wcoord, ClicledPoint)) {									// Случай перевыбора
-				C[Pervpoint[0]][Pervpoint[1]].innerHTML = "<div class='PeshkaW'><div>";
-				Pervpoint = ClicledPoint;
-				C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div Class='PeshkaW PeshkaWClicked'><div>";
+				var pointbefore = Pickcell;
+				Pickcell = ClicledPoint;
+				draw(pointbefore);
+				draw(ClicledPoint);
 			}
-			else if (isCanStep(Pervpoint, ClicledPoint, true)) {							// Случай хода
-				C[Pervpoint[0]][Pervpoint[1]].innerHTML = "";
-				C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div class='PeshkaW'><div>";
+			else if (isCanStep(Pickcell, ClicledPoint, true)) {							// Случай хода
 				step++;
-				Pervpoint = Wcoord[(SearchArr(Wcoord, Pervpoint))];
+				Pickcell = Wcoord[(SearchArr(Wcoord, Pickcell))];
 				if (ClicledPoint[0] == 0) { // тест на дамку
-					Wcoord.splice(SearchArr(Wcoord, Pervpoint), 1, [ClicledPoint[0], ClicledPoint[1], true]);
+					Wcoord.splice(SearchArr(Wcoord, Pickcell), 1, [ClicledPoint[0], ClicledPoint[1], true]);
 				}
 				else {
-					Wcoord.splice(SearchArr(Wcoord, Pervpoint), 1, [ClicledPoint[0], ClicledPoint[1], Pervpoint[2]]);
+					Wcoord.splice(SearchArr(Wcoord, Pickcell), 1, [ClicledPoint[0], ClicledPoint[1], Pickcell[2]]);
 				}
-				Pervpoint = undefined;
+				draw(Pickcell);
+				draw(ClicledPoint);
+				Pickcell = undefined;
 			}
-			else {
+			else {																		// Проверка случая сруба
 				var directon = new Array();
+				var Pervpoint = Pickcell.slice();
 				if (ClicledPoint[0] > Pervpoint[0])	{directon[0] = 1;}
 				else 								{directon[0] = -1;}
 				if (ClicledPoint[1] > Pervpoint[1])	{directon[1] = 1;}
 				else 								{directon[1] = -1;}
-				var nextpoint = [Pervpoint[0] + 2 * directon[0], Pervpoint[1] + 2 * directon[1]];
-				if ((Math.abs(ClicledPoint[0] - Pervpoint[0]) <= Math.abs(2* directon[0])) &&
-					(Math.abs(ClicledPoint[1] - Pervpoint[1]) <= Math.abs(2* directon[1]))) {
-																			// Случай сруба вражеской пешки
-					if (isCanBit(Pervpoint, [Pervpoint[0] + 	directon[0], Pervpoint[1] +		directon[1]],
-											[Pervpoint[0] + 2 *	directon[0], Pervpoint[1] + 2 * directon[1]]))
+				var posperv = SearchArr(Wcoord, Pervpoint);
+				var nextpoint = [Pervpoint[0] + 2 * directon[0], Pickcell[1] + 2 * directon[1]];
+				if (((Math.abs(ClicledPoint[0] - Pervpoint[0]) <= Math.abs(2* directon[0])) &&
+					(Math.abs(ClicledPoint[1] - Pervpoint[1]) <= Math.abs(2* directon[1]))) || 
+					(Wcoord[posperv][2])) {
+																								// Случай сруба вражеской пешки
+					if (isCanBit(Pickcell, [Pickcell[0] + 	directon[0], Pickcell[1] +		directon[1]],
+											[Pickcell[0] + 2 *	directon[0], Pickcell[1] + 2 * directon[1]]))
 					{
-						Bcoord.splice(SearchArr(Bcoord, [Pervpoint[0] + directon[0], Pervpoint[1] + directon[1]]), 1);
-
-						C[Pervpoint[0] + directon[0]][Pervpoint[1] + directon[1]].innerHTML = "";
-						C[Pervpoint[0]][Pervpoint[1]].innerHTML = "";
-						Pervpoint = Wcoord[(SearchArr(Wcoord, Pervpoint))];
-						if (nextpoint[0] == 0) { // тест на дамку
-							Wcoord.splice(SearchArr(Wcoord, Pervpoint), 1, [nextpoint[0], nextpoint[1], true]);
+						Bcoord.splice(SearchArr(Bcoord, [Pickcell[0] + directon[0], Pickcell[1] + directon[1]]), 1); 	// Удаляем срубленную шашку
+						Pickcell = Wcoord[(SearchArr(Wcoord, Pickcell))];												// На случай повторного сруба оставляем выбранную клетку в качестве данной
+						if (nextpoint[0] == 0) { 																	// тест на дамку
+							Wcoord.splice(SearchArr(Wcoord, Pickcell), 1, [nextpoint[0], nextpoint[1], true]);
 						}
 						else {
-							Wcoord.splice(SearchArr(Wcoord, Pervpoint), 1, [nextpoint[0], nextpoint[1], Pervpoint[2]]);
+							Wcoord.splice(SearchArr(Wcoord, Pickcell), 1, [nextpoint[0], nextpoint[1], Pickcell[2]]);
 						}
-						Pervpoint = undefined;
 						if (!isCanBitMore(nextpoint, true)) {
-							Pervpoint = undefined;
+							Pickcell = undefined;
 							step++;
-							C[nextpoint[0]][nextpoint[1]].innerHTML = "<div class='PeshkaW'><div>";
 						}
 						else {
-							Pervpoint = nextpoint;
-							C[nextpoint[0]][nextpoint[1]].innerHTML = "<div Class='PeshkaW PeshkaWClicked'><div>";
+							Pickcell = nextpoint;
 						}
+						draw(Pervpoint);
+						draw([Pervpoint[0] + directon[0], Pervpoint[1] + directon[1]]);
+						draw(nextpoint);
 					}
 				}
 			}
 		}
 		else {								// Ход чёрных
-			if ((Pervpoint === undefined) && (SearchArr(Bcoord, ClicledPoint) >= 0)) {	// Этап выбора шашки, которая будет делать ход
-				Pervpoint = ClicledPoint;
-				C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div Class='PeshkaB PeshkaBClicked'><div>";
+			if ((Pickcell === undefined) && (SearchArr(Bcoord, ClicledPoint) >= 0)) {	// Этап выбора шашки, которая будет делать ход
+				Pickcell = ClicledPoint;
+				draw(ClicledPoint);
 			}
 			else if (~SearchArr(Bcoord, ClicledPoint)) {										// Случай перевыбора
-				C[Pervpoint[0]][Pervpoint[1]].innerHTML = "<div Class='PeshkaB'><div>";
-				Pervpoint = ClicledPoint;
-				C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div Class='PeshkaB PeshkaBClicked'><div>";
+				var pointbefore = Pickcell;
+				Pickcell = ClicledPoint;
+				draw(pointbefore);
+				draw(ClicledPoint);
 			}
-			else if (isCanStep(Pervpoint, ClicledPoint, false)) { 								// Случай хода
-				C[Pervpoint[0]][Pervpoint[1]].innerHTML = "";
-				C[ClicledPoint[0]][ClicledPoint[1]].innerHTML = "<div Class='PeshkaB'><div>";
-				Bcoord.splice(SearchArr(Bcoord, Pervpoint), 1, ClicledPoint);
+			else if (isCanStep(Pickcell, ClicledPoint, false)) { 								// Случай хода
+				Bcoord.splice(SearchArr(Bcoord, Pickcell), 1, ClicledPoint);
 				step++;
-				Pervpoint = undefined;
+				draw(Pickcell);
+				draw(ClicledPoint);
+				Pickcell = undefined;
 			}
 			else {
 				var directon = new Array();
-				if (ClicledPoint[0] > Pervpoint[0])	{directon[0] = 1;}
+				var Pervpoint = Pickcell.slice();
+				if (ClicledPoint[0] > Pickcell[0])	{directon[0] = 1;}
 				else 								{directon[0] = -1;}
-				if (ClicledPoint[1] > Pervpoint[1])	{directon[1] = 1;}
+				if (ClicledPoint[1] > Pickcell[1])	{directon[1] = 1;}
 				else 								{directon[1] = -1;}
-				var nextpoint = [Pervpoint[0] + 2 * directon[0], Pervpoint[1] + 2 * directon[1]];
-				if ((Math.abs(ClicledPoint[0] - Pervpoint[0]) <= Math.abs(2* directon[0])) &&
-					(Math.abs(ClicledPoint[1] - Pervpoint[1]) <= Math.abs(2* directon[1]))) {
+				var posperv = SearchArr(Bcoord, Pervpoint);
+				var nextpoint = [Pickcell[0] + 2 * directon[0], Pickcell[1] + 2 * directon[1]];
+				if (((Math.abs(ClicledPoint[0] - Pickcell[0]) <= Math.abs(2* directon[0])) &&
+					(Math.abs(ClicledPoint[1] - Pickcell[1]) <= Math.abs(2* directon[1]))) ||
+					(Bcoord[posperv][2])) {
 																			// Случай сруба вражеской пешки
-					if (isCanBit(Pervpoint, [Pervpoint[0] + 	directon[0], Pervpoint[1] +		directon[1]],
-											[Pervpoint[0] + 2 *	directon[0], Pervpoint[1] + 2 * directon[1]]))
+					if (isCanBit(Pickcell, [Pickcell[0] + 	directon[0], Pickcell[1] +		directon[1]],
+											[Pickcell[0] + 2 *	directon[0], Pickcell[1] + 2 * directon[1]]))
 					{
-						Bcoord[SearchArr(Bcoord, Pervpoint)] = nextpoint;
-						Wcoord.splice(SearchArr(Wcoord, [Pervpoint[0] + directon[0], Pervpoint[1] + directon[1]]), 1);
-						C[Pervpoint[0] + directon[0]][Pervpoint[1] + directon[1]].innerHTML = "";
-						C[Pervpoint[0]][Pervpoint[1]].innerHTML = "";
-						if (!isCanBitMore(nextpoint, false)) {
-							Pervpoint = undefined;
-							step++;
-							C[nextpoint[0]][nextpoint[1]].innerHTML = "<div class='PeshkaB'><div>";
+						Wcoord.splice(SearchArr(Wcoord, [Pickcell[0] + directon[0], Pickcell[1] + directon[1]]), 1); 
+						Pickcell = Bcoord[(SearchArr(Bcoord, Pickcell))];
+						if (nextpoint[0] == 0) { // тест на дамку
+							Bcoord.splice(SearchArr(Bcoord, Pickcell), 1, [nextpoint[0], nextpoint[1], true]);
 						}
 						else {
-							Pervpoint = nextpoint;
-							C[nextpoint[0]][nextpoint[1]].innerHTML = "<div Class='PeshkaB PeshkaBClicked'><div>";
+							Bcoord.splice(SearchArr(Bcoord, Pickcell), 1, [nextpoint[0], nextpoint[1], Pickcell[2]]);
 						}
+						if (!isCanBitMore(nextpoint, false)) {
+							Pickcell = undefined;
+							step++;
+						}
+						else {
+							Pickcell = nextpoint;
+						}
+						draw(Pervpoint);
+						draw([Pervpoint[0] + directon[0], Pervpoint[1] + directon[1]]);
+						draw(nextpoint);
 					}
 				}
 			}
