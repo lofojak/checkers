@@ -3,7 +3,7 @@ div.SectionW {
 	display: inline-block;
 	margin-right: 5px;
 	background: #ccf; 
-}
+} /* Белый квадрат игрового поля */
 
 div.SectionB {
 	width: 70px; height: 70px;
@@ -11,13 +11,13 @@ div.SectionB {
 	margin-right: 5px;
 	background: black; 
 	border-radius: 0%;
-}
+} /* Черный квадрат игрового поля */
 
 div.SectionB:hover { 
 	background: #779f19;
-}
+}  /* Немношко красоты */
 
-.circle {
+.circleW {
 	border-radius: 50%;
 	width: 66px;
 	height: 66px;
@@ -25,15 +25,22 @@ div.SectionB:hover {
 	left: 12px;
 	top: 12px;
 	visibility: hidden;
-}
-.circleW {
 	border: 1px solid #fff;
 	background: #bcc;
-}
+} /* Шашка белого цвета */
+
 .circleB {
+	border-radius: 50%;
+	width: 66px;
+	height: 66px;
+	position:  absolute;
+	left: 12px;
+	top: 12px;
+	visibility: hidden;
 	border: 1px solid #888;
 	background: #644;
-}
+} /* Шашка черного цвета */
+
 .PeshkaW {
 	border-radius: 50%;
 	width: 66px;
@@ -43,6 +50,7 @@ div.SectionB:hover {
 	margin: 1px;
 	background: #bcc;
 }
+
 .PeshkaB {
 	border-radius: 50%;
 	width: 66px;
@@ -52,6 +60,7 @@ div.SectionB:hover {
 	margin: 1px;
 	background: #644;
 }
+
 .PeshkaWClicked {
 	background: #888;
 }

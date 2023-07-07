@@ -1,11 +1,14 @@
 var C = new Array();
+/ Это двумерный массив из HTML элементов - Div каждого квадрата/
 var Wcoord = new Array();
+/ Это массив шашек. Шашка предстовляет собой массив из {X; Y; isDamka}/
 var Bcoord = new Array();
-var step = -1;
-var NumberCell = 8;
+/ Аналогично/
+var step = -1; / счётсик ходов/ 
+var NumberCell = 8; 
 var Pervpoint;
 
-function isOnBoard(id, WhatisCheck) {
+function isOnBoard(id, WhatisCheck) { / функция для проверки, что находится на игровом поле /
 	if (WhatisCheck === "cell") {
 		if ((id[0] < NumberCell) && (id[1] < NumberCell)) {
 			if ((id[0] % 2) + (id[1] % 2) === 1) 	{return "Black";} 
@@ -18,10 +21,10 @@ function isOnBoard(id, WhatisCheck) {
 	}
 }
 
-function SearchArr(Arr1, Arr2) {
+function SearchArr(Arr, Element) {
 	var ret = -1;
-	for (var i = 0; i < Arr1.length; i++) {
-		if ((Arr1[i][0] == Arr2[0]) && (Arr1[i][1] == Arr2[1])) {
+	for (var i = 0; i < Arr.length; i++) {
+		if ((Arr[i][0] == Element[0]) && (Arr[i][1] == Element[1])) {
 			ret = i;
 			break;
 		}
@@ -29,13 +32,15 @@ function SearchArr(Arr1, Arr2) {
 	return ret;
 }
 
-function Table() {
-	//NumberCell = prompt();
+function Table() { / Функция генерации HTML таблицы /
 	document.write('<table name="Set"> <tbody>');
 	for (var i = 0; i < NumberCell; i++) {
 		document.write('<tr>');
 		for (var j = 0; j < NumberCell; j++) {
-			document.write('<td> <div class="Section' + (((i + j) % 2 === 0) ? "W" : "B") + '" id="C:' + i + ' ' + j  + '" onclick="Click([' + i + ', '+ j + '])"> </div> </td>');
+			var Color = 'class="Section' + (((i + j) % 2 === 0) ? 'W' : 'B');
+			var id = 'id="C:' + i + ' ' + j;
+			var funconclick = 'onclick="Click([' + i + ', '+ j + '])"';
+			document.write('<td> <div ' + Color + '" ' + id + '" '+ funconclick + '> </div> </td>');
 		}
 		document.write('</tr>');
 	}
